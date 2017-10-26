@@ -5,15 +5,31 @@
 # uses to deploy your code to your provider of choice
 
 # The `service` block is the name of the service
-service: serverless-boilerplate
+service: serverless-alarms
 
 plugins:
-  - serverless-offline
+  - serverless-plugin-aws-alerts
 
 # The `provider` block defines where your service will be deployed
 provider:
   name: aws
   runtime: nodejs6.10
+  region: ap-southeast-1
+
+custom:
+  alerts:
+    stages:
+      - dev
+    topics:
+      alarm: ${self:service}-${self:provider.stage}-alerts-alarm
+      notifications:
+        - protocol: email
+          endpoint: yosriady@gmail.com # Change this to your email address
+    alarms:
+      - functionErrors
+      - functionThrottles
 
 # The `functions` block defines what code to deploy
-# functions:
+functions:
+  createUser:
+    handler: functions/createUser.handler
